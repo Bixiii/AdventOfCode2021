@@ -7,3 +7,7 @@ set(UTILS utils.cpp utils.h)
 
 add_executable(template day_0.cpp ${UTILS})
 configure_file(data/input_day_0.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
+
+add_executable(day_01 day_01.cpp ${UTILS})
+configure_file(data/input_day_1.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
+
