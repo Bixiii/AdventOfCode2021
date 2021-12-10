@@ -29,3 +29,6 @@ target_compile_features(day_07 PRIVATE cxx_std_17)
 
 add_executable(day_08 day_08.cpp ${UTILS})
 configure_file(data/input_day_8.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
+
+add_executable(day_09 day_09.cpp ${UTILS})
+configure_file(data/input_day_9.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
