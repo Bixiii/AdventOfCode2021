@@ -4,21 +4,34 @@
 #include <list>
 #include <map>
 #include <utility>
-#include <cstring>
 #include <cctype>
+#include <sstream>
+
+std::list<std::string> path_description_;
+
+void print_path() {
+    std::stringstream path;
+    for (auto sub_path : path_description_) {
+        path << sub_path;
+    }
+    std::cout << path.str() << std::endl;
+}
+
+bool revisit_used;
 
 class Cave {
  private:
     std::string name_;
     std::list<Cave*> connected_caves_;
     bool visited_ = false;
+    bool revisited_ = false;
     bool is_small = false;
  public:
-
     Cave() = default;
     Cave(std::string name) {
         is_small = islower(name[0]);
         name_ = std::move(name);
+        revisit_used = false;
     };
 
     void AddConnectedCave(Cave* connectedCave) {
@@ -39,29 +52,46 @@ class Cave {
         return !(name_<rhs.name_);
     };
 
-    int Explore(std::map<std::string, Cave> caves) {
+    int Explore(std::map<std::string, Cave> caves, bool enable_revisit) {
         int found_paths = 0;
         if (is_small) {
             // end reached
             if (name_ == "end") {
-                std::cout << "=> " << name_ << std::endl;
+                path_description_.emplace_back(" = end");
+//                print_path();
+                path_description_.pop_back();
                 return 1;
             }
             // cave was already visited
             if (caves[name_].visited_){
-                std::cout << "=> blind end" << std::endl;
-                return 0;
+                if (enable_revisit && (!revisit_used and name_ != "start")) {
+                    revisit_used = true;
+                    caves[name_].revisited_ = true;
+                } else {
+                    path_description_.emplace_back(" = blind end");
+                    path_description_.pop_back();
+                    return 0;
+                }
             }
             caves[name_].visited_ = true;
             for (auto connected_cave : connected_caves_) {
-                std::cout << name_ << "->" << connected_cave->name_ << std::endl;
-                found_paths += connected_cave->Explore(caves);
+                std::stringstream sub_path;
+                sub_path << name_ << "->" << connected_cave->name_ << "; ";
+                path_description_.emplace_back(sub_path.str());
+                found_paths += connected_cave->Explore(caves, enable_revisit);
+                path_description_.pop_back();
+            }
+            if (enable_revisit && caves[name_].revisited_) {
+                revisit_used = false;
             }
             return found_paths;
         } else {
             for (auto connected_cave : connected_caves_) {
-                std::cout << name_ << "->" << connected_cave->name_ << std::endl;
-                found_paths += connected_cave->Explore(caves);
+                std::stringstream sub_path;
+                sub_path << name_ << "->" << connected_cave->name_ << "; ";
+                path_description_.emplace_back(sub_path.str());
+                found_paths += connected_cave->Explore(caves, enable_revisit);
+                path_description_.pop_back();
             }
             return found_paths;
         }
@@ -95,11 +125,14 @@ int main() {
         caves[end].AddConnectedCave(&caves[start]);
     }
 
-     int num = caves["start"].Explore(caves);
+    // part 1
+    int res_one = caves["start"].Explore(caves, false);
+    // part 2
+    int res_two = caves["start"].Explore(caves, true);
 
     std::cout << "\n*** Results ***" << std::endl;
-    std::cout << "Day " << challenge_id << " - Part 1: " << num << std::endl;
-    std::cout << "Day " << challenge_id << " - Part 2: " << std::endl;
+    std::cout << "Day " << challenge_id << " - Part 1: " << res_one << std::endl;
+    std::cout << "Day " << challenge_id << " - Part 2: " << res_two << std::endl;
 
     return 0;
 }
