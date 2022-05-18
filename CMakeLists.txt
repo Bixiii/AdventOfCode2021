@@ -3,7 +3,7 @@ project(AdventOfCode2021)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(UTILS utils.cpp utils.h)
+set(UTILS utils.cpp utils.h Position.cpp Position.h)
 
 add_executable(template day_0.cpp ${UTILS})
 configure_file(data/input_day_0.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
@@ -41,3 +41,6 @@ configure_file(data/input_day_11.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
 
 add_executable(day_12 day_12.cpp ${UTILS})
 configure_file(data/input_day_12.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
+
+add_executable(day_13 day_13.cpp ${UTILS})
+configure_file(data/input_day_13.txt ${CMAKE_BINARY_DIR}/ COPYONLY)
