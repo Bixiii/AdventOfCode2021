@@ -50,18 +50,59 @@ class Vertex {
 
 };
 
-int main() {
+void print_path(const std::vector<std::vector<std::string>>& path){
+    int max_x = path[0].size();
+    int max_y = path.size();
+    std::cout << std::endl << "Path:" << std::endl << "   ";
+    for (int x=0; x<max_x; x++) {
+        std::cout << " " << x << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "---";
+    for (int x=0; x<max_x; x++) {
+        std::cout << "---";
+    }
+    std::cout << std::endl;
+    for (int x=0; x<max_x; x++) {
+        std::cout << x << "| ";
+        for (int y = 0; y < max_y; y++) {
+            std::cout << path[x][y];
+        }
+        std::cout << std::endl;
+    }
+}
 
-    int challenge_id = 15;
-    auto input_data = InputData(challenge_id);
+void print_distances(const std::vector<std::vector<int>>& distances) {
+    int max_x = distances[0].size();
+    int max_y = distances.size();
+    std::cout << std::endl << "Distances:" << std::endl << "   ";
+    for (int x=0; x<max_x; x++) {
+        std::cout << " " << x << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "---";
+    for (int x=0; x<max_x; x++) {
+        std::cout << "---";
+    }
+    std::cout << std::endl;
+    for (int x=0; x<max_x; x++) {
+        std::cout << x << "| ";
+        for (int y = 0; y < max_y; y++) {
+            if (distances[x][y] < 10) {
+                std::cout << " " << distances[x][y] << " ";
+            } else {
+                std::cout << distances[x][y] << " ";
+            }
+        }
+        std::cout << std::endl;
+    }
+}
 
+std::vector<std::vector<int>> parse_input(const std::vector<std::string>& input_data){
     int max_y = (int) input_data.size();
     int max_x = (int) input_data[0].size();
 
     std::vector<std::vector<int>> risk_levels(max_x, std::vector<int>(max_y));
-    std::vector<std::vector<int>> distances(max_x, std::vector<int>(max_y));
-    std::vector<std::vector<Vertex>> previous(max_x, std::vector<Vertex>(max_y));
-    std::vector<Vertex> queue;
 
     for(auto row=0; row < input_data.size(); row++) {
         for (auto column=0; column < input_data[0].size(); column++) {
@@ -69,14 +110,22 @@ int main() {
             risk_levels[row][column] = risk_level;
         }
     }
+    return risk_levels;
+}
+
+std::tuple<std::vector<std::vector<int>>,std::vector<std::vector<std::string>>> do_path_finding(const std::vector<std::vector<int>>& risk_levels){
+    int max_y = (int) risk_levels.size();
+    int max_x = (int) risk_levels[0].size();
+
+    std::vector<std::vector<int>> distances(max_x, std::vector<int>(max_y));
+    std::vector<std::vector<Vertex>> previous(max_x, std::vector<Vertex>(max_y));
+    std::vector<Vertex> queue;
 
     for (int x=0; x<max_x; x++) {
         for (int y=0; y<max_y; y++) {
             distances[x][y] = 2147483646;
             queue.emplace_back(x, y);
-//            std::cout << risk_levels[x][y];
         }
-//        std::cout << std::endl;
     }
 
     distances[0][0] = 0;
@@ -111,7 +160,6 @@ int main() {
             }
         }
 
-//        std::cout << (max_x * max_y) - (step++) << "|";
         step++;
         if (step > current_value_percent) {
             std::cout << "|";
@@ -119,7 +167,6 @@ int main() {
         }
     }
     std::cout << std::endl << "... finished." << std::endl;
-
 
     std::vector<std::vector<std::string>> path(max_x, std::vector<std::string>(max_y));
     for (int x=0; x<max_x; x++) {
@@ -152,51 +199,68 @@ int main() {
         path[closest_vertex.x_][closest_vertex.y_] = " * ";
         current_vertex = closest_vertex;
     }
-//    std::cout << std::endl << "Distances:" << std::endl << "   ";
-//    for (int x=0; x<max_x; x++) {
-//        std::cout << " " << x << " ";
-//    }
-//    std::cout << std::endl;
-//    std::cout << "---";
-//    for (int x=0; x<max_x; x++) {
-//        std::cout << "---";
-//    }
-//    std::cout << std::endl;
-//    for (int x=0; x<max_x; x++) {
-//        std::cout << x << "| ";
-//        for (int y = 0; y < max_y; y++) {
-//            if (distances[x][y] < 10) {
-//                std::cout << " " << distances[x][y] << " ";
-//            } else {
-//                std::cout << distances[x][y] << " ";
-//            }
-//        }
-//        std::cout << std::endl;
+    std::tuple<std::vector<std::vector<int>>,std::vector<std::vector<std::string>>> return_values;
+    return std::make_tuple(distances, path);
+}
+
+int main() {
+
+    int challenge_id = 15;
+    auto input_data = InputData(challenge_id);
+
+    int max_y = (int) input_data.size();
+    int max_x = (int) input_data[0].size();
+
+
+    auto risk_levels = parse_input(input_data);
+
+//    {
+//        // first part - calculate the shortest path
+//        auto [distances, path] = do_path_finding(risk_levels);
+//        //print_distances(distances);
+//        // print_path(path);
+//        std::cout << std::endl << "Day " << challenge_id << " - Part 1: " << distances[max_x-1][max_y-1] << std::endl;
 //    }
 
-    std::cout << std::endl << "Path:" << std::endl << "   ";
-    for (int x=0; x<max_x; x++) {
-        std::cout << " " << x << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "---";
-    for (int x=0; x<max_x; x++) {
-        std::cout << "---";
-    }
-    std::cout << std::endl;
-    for (int x=0; x<max_x; x++) {
-        std::cout << x << "| ";
-        for (int y = 0; y < max_y; y++) {
-            std::cout << path[x][y];
+    {
+        // second part - prepare input
+        std::vector<std::vector<int>> full_risk_levels;
+        int num_tiles_repeated = 5 - 1;
+
+        for (int y=0; y<max_y; y++) {
+            std::vector<int> line = risk_levels[y];
+            for (int i=0; i<num_tiles_repeated; i++) {
+                for (int x=0; x<max_x; x++) {
+                    int risk_level;
+                    if (line[x + i*(max_x)] == 9) {
+                        line.push_back(1);
+                    } else {
+                        line.push_back(line[x + i*(max_x)] + 1);
+                    }
+                }
+            }
+            full_risk_levels.push_back(line);
         }
-        std::cout << std::endl;
+
+        for (int i=0; i<num_tiles_repeated; i++) {
+            for (int y=0; y<max_y; y++){
+                std::vector<int> line = full_risk_levels[y+i*max_y];
+                std::vector<int> new_line;
+                for (int element : line) {
+                    if (element == 9) {
+                        new_line.push_back(1);
+                    } else {
+                        new_line.push_back(element + 1);
+                    }
+                }
+                full_risk_levels.push_back(new_line);
+            }
+        }
+
+        // second part - calculate the shortest path
+        auto [distances, path] = do_path_finding(full_risk_levels);
+        std::cout << "Day " << challenge_id << " - Part 2: " << distances[distances.size()-1][distances[0].size()-1] << std::endl;
     }
-
-
-
-    std::cout << "\n*** Results ***" << std::endl;
-    std::cout << "Day " << challenge_id << " - Part 1: " << distances[max_x-1][max_y-1] << std::endl;
-    std::cout << "Day " << challenge_id << " - Part 2: " << std::endl;
 
     return 0;
 }
