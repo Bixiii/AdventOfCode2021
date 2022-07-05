@@ -4,7 +4,7 @@
 
 #include "Position.h"
 
-std::vector<Position> Position::Neighbours() {
+std::vector<Position> Position::Neighbours(bool diagonals) {
     std::vector<Position> neighbours;
     // left
     if(x_-1 >= 0){
@@ -22,21 +22,23 @@ std::vector<Position> Position::Neighbours() {
     if(y_-1 >= 0){
         neighbours.emplace_back(x_, y_-1);
     }
-    // left up
-    if (x_-1 >= 0 && y_-1 >= 0) {
-        neighbours.emplace_back(x_-1, y_-1);
-    }
-    // left down
-    if (x_-1 >= 0 && y_+1 < field_size_) {
-        neighbours.emplace_back(x_-1, y_+1);
-    }
-    // right up
-    if (x_+1 < field_size_ && y_-1 >= 0) {
-        neighbours.emplace_back(x_+1, y_-1);
-    }
-    // right down
-    if (x_+1 < field_size_ && y_+1 < field_size_) {
-        neighbours.emplace_back(x_+1, y_+1);
+    if (diagonals) {
+        // left up
+        if (x_-1 >= 0 && y_-1 >= 0) {
+            neighbours.emplace_back(x_-1, y_-1);
+        }
+        // left down
+        if (x_-1 >= 0 && y_+1 < field_size_) {
+            neighbours.emplace_back(x_-1, y_+1);
+        }
+        // right up
+        if (x_+1 < field_size_ && y_-1 >= 0) {
+            neighbours.emplace_back(x_+1, y_-1);
+        }
+        // right down
+        if (x_+1 < field_size_ && y_+1 < field_size_) {
+            neighbours.emplace_back(x_+1, y_+1);
+        }
     }
     return neighbours;
 }

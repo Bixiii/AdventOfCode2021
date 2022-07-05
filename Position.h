@@ -23,7 +23,7 @@ class Position {
     Position () = default;
     Position(int x, int y) : x_(x), y_(y) {};
     static void SetFieldSize(int field_size) {field_size_=field_size;}
-    std::vector<Position> Neighbours();
+    std::vector<Position> Neighbours(bool diagonals);
     std::string Description();
 
     bool operator==(const Position &rhs) const {
@@ -32,8 +32,14 @@ class Position {
     bool operator<(const Position &rhs) const {
         return std::tie(x_, y_) < std::tie(rhs.x_, rhs.y_);
     }
-    std::tuple<int, int> Coordinates() {
+    [[nodiscard]] std::tuple<int, int> Coordinates() const {
         return std::make_tuple(x_, y_);
+    }
+
+    [[nodiscard]] std::string ToString() const {
+        std::stringstream build_string;
+        build_string << "(" << x_ << "/" << y_ << ")";
+        return build_string.str();
     }
 };
 

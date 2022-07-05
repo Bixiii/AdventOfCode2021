@@ -88,7 +88,7 @@ int main() {
             for (int y=0; y<field_size; y++) {
                 Position position = {x, y};
                 if (octopus_field[position].IncrementEnergyLevelInCurrentCycle()) {
-                    std::vector<Position> neighbours = position.Neighbours();
+                    std::vector<Position> neighbours = position.Neighbours(true);
                     neighbour_flashed.insert(neighbour_flashed.end(), neighbours.begin(), neighbours.end());
                     num_flashes++;
                 }
@@ -101,7 +101,7 @@ int main() {
             neighbour_flashed = {};
             for (Position position : needs_increment) {
                 if (octopus_field[position].IncrementEnergyLevelInCurrentCycle()) {
-                    std::vector<Position> neighbours = position.Neighbours();
+                    std::vector<Position> neighbours = position.Neighbours(true);
                     neighbour_flashed.insert(neighbour_flashed.end(), neighbours.begin(), neighbours.end());
                     num_flashes++;
                 }
